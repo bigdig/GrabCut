@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		1F7D7A6817684D8F007EFC49 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1F7D7A6717684D8F007EFC49 /* main.cpp */; };
 		1F7D7A6A17684D8F007EFC49 /* GrabCut.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1F7D7A6917684D8F007EFC49 /* GrabCut.1 */; };
+		1F7D7A7417684E2B007EFC49 /* libopencv_core.2.4.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F7D7A7217684E2B007EFC49 /* libopencv_core.2.4.5.dylib */; };
+		1F7D7A7517684E2B007EFC49 /* libopencv_highgui.2.4.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F7D7A7317684E2B007EFC49 /* libopencv_highgui.2.4.5.dylib */; };
+		1F7D7A7B1768559C007EFC49 /* libopencv_imgproc.2.4.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F7D7A7A1768559C007EFC49 /* libopencv_imgproc.2.4.5.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -28,6 +31,12 @@
 		1F7D7A6417684D8F007EFC49 /* GrabCut */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = GrabCut; sourceTree = BUILT_PRODUCTS_DIR; };
 		1F7D7A6717684D8F007EFC49 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		1F7D7A6917684D8F007EFC49 /* GrabCut.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = GrabCut.1; sourceTree = "<group>"; };
+		1F7D7A7017684DCA007EFC49 /* gcgraph.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = gcgraph.hpp; sourceTree = "<group>"; };
+		1F7D7A7117684DCA007EFC49 /* precomp.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = precomp.hpp; sourceTree = "<group>"; };
+		1F7D7A7217684E2B007EFC49 /* libopencv_core.2.4.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_core.2.4.5.dylib; path = ../../../../../usr/local/lib/libopencv_core.2.4.5.dylib; sourceTree = "<group>"; };
+		1F7D7A7317684E2B007EFC49 /* libopencv_highgui.2.4.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_highgui.2.4.5.dylib; path = ../../../../../usr/local/lib/libopencv_highgui.2.4.5.dylib; sourceTree = "<group>"; };
+		1F7D7A7617685191007EFC49 /* libopencv_ml.2.4.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_ml.2.4.5.dylib; path = ../../../../../usr/local/lib/libopencv_ml.2.4.5.dylib; sourceTree = "<group>"; };
+		1F7D7A7A1768559C007EFC49 /* libopencv_imgproc.2.4.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_imgproc.2.4.5.dylib; path = ../../../../../usr/local/lib/libopencv_imgproc.2.4.5.dylib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -35,6 +44,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1F7D7A7B1768559C007EFC49 /* libopencv_imgproc.2.4.5.dylib in Frameworks */,
+				1F7D7A7417684E2B007EFC49 /* libopencv_core.2.4.5.dylib in Frameworks */,
+				1F7D7A7517684E2B007EFC49 /* libopencv_highgui.2.4.5.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -44,6 +56,10 @@
 		1F7D7A5B17684D8F007EFC49 = {
 			isa = PBXGroup;
 			children = (
+				1F7D7A7A1768559C007EFC49 /* libopencv_imgproc.2.4.5.dylib */,
+				1F7D7A7617685191007EFC49 /* libopencv_ml.2.4.5.dylib */,
+				1F7D7A7217684E2B007EFC49 /* libopencv_core.2.4.5.dylib */,
+				1F7D7A7317684E2B007EFC49 /* libopencv_highgui.2.4.5.dylib */,
 				1F7D7A6617684D8F007EFC49 /* GrabCut */,
 				1F7D7A6517684D8F007EFC49 /* Products */,
 			);
@@ -60,6 +76,8 @@
 		1F7D7A6617684D8F007EFC49 /* GrabCut */ = {
 			isa = PBXGroup;
 			children = (
+				1F7D7A7017684DCA007EFC49 /* gcgraph.hpp */,
+				1F7D7A7117684DCA007EFC49 /* precomp.hpp */,
 				1F7D7A6717684D8F007EFC49 /* main.cpp */,
 				1F7D7A6917684D8F007EFC49 /* GrabCut.1 */,
 			);
@@ -127,10 +145,10 @@
 		1F7D7A6B17684D8F007EFC49 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
+				ALWAYS_SEARCH_USER_PATHS = YES;
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_CXX_LIBRARY = "libstdc++";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -151,19 +169,22 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "/usr/local/include/**";
+				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
+				VALID_ARCHS = "x86_64 i386";
 			};
 			name = Debug;
 		};
 		1F7D7A6C17684D8F007EFC49 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
+				ALWAYS_SEARCH_USER_PATHS = YES;
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_CXX_LIBRARY = "libstdc++";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -178,8 +199,11 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "/usr/local/include/**";
+				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				SDKROOT = macosx;
+				VALID_ARCHS = "x86_64 i386";
 			};
 			name = Release;
 		};
