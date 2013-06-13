@@ -1,6 +1,5 @@
 #include <highgui.h>
 #include <iostream>
-#include "maxflow.hpp"
 #include "graph.h"
 
 using namespace std;

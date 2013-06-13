@@ -14,6 +14,7 @@
 		1F9DA6D3176946BD0006309F /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1F9DA6D1176946BD0006309F /* main.cpp */; };
 		1F9DA6F417694CA30006309F /* graph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1F9DA6F017694CA30006309F /* graph.cpp */; };
 		1F9DA6F617694CA30006309F /* maxflow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1F9DA6F317694CA30006309F /* maxflow.cpp */; };
+		1FF3DBFF17697C5800BD207B /* instances.inc in Sources */ = {isa = PBXBuildFile; fileRef = 1FF3DBFE17697C5800BD207B /* instances.inc */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -40,6 +41,7 @@
 		1F9DA6F017694CA30006309F /* graph.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = graph.cpp; sourceTree = "<group>"; };
 		1F9DA6F117694CA30006309F /* graph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = graph.h; sourceTree = "<group>"; };
 		1F9DA6F317694CA30006309F /* maxflow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = maxflow.cpp; sourceTree = "<group>"; };
+		1FF3DBFE17697C5800BD207B /* instances.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; path = instances.inc; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -78,6 +80,7 @@
 		1F7D7A6617684D8F007EFC49 /* GrabCut */ = {
 			isa = PBXGroup;
 			children = (
+				1FF3DBFE17697C5800BD207B /* instances.inc */,
 				1F9DA6EF17694CA30006309F /* block.h */,
 				1F9DA6F017694CA30006309F /* graph.cpp */,
 				1F9DA6F117694CA30006309F /* graph.h */,
@@ -142,6 +145,7 @@
 				1F9DA6D3176946BD0006309F /* main.cpp in Sources */,
 				1F9DA6F417694CA30006309F /* graph.cpp in Sources */,
 				1F9DA6F617694CA30006309F /* maxflow.cpp in Sources */,
+				1FF3DBFF17697C5800BD207B /* instances.inc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
