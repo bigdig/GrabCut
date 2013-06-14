@@ -1,11 +1,12 @@
 #include <highgui.h>
 #include <iostream>
+#include "maxflow.cpp"
 #include "graph.h"
 
 using namespace std;
 using namespace cv;
 
-typedef Graph<int,int,int> GraphType;       //typedef for new graph class
+typedef Graph<int, int, int> GraphType;
 
 // class of the pixel in GrabCut algorithm
 enum
@@ -31,8 +32,8 @@ public:
     //which model does a pixel belong to
     int whichModel( const Vec3d color ) const;
     //xian pan duan color (pixel) shuyu nage ci, ranhou addsample dao ci
-    void initLearning();
-    void addSample( int ci, const Vec3d color );
+    void initParameter();
+    void calcParameter( int ci, const Vec3d color );
     void endLearning();
     
 private:
@@ -89,13 +90,13 @@ double GMM::operator()( const Vec3d color ) const
     return pro;
 }
 
-//calculate the pro for the pixel belongs to ci in this GMM 
+//calculate the pro for the pixel belongs to ci in this GMM
 double GMM::operator()( int ci, const Vec3d color ) const
 {
     double pro = 0;
     if( modelWeight[ci] > 0 )
     {
-       
+        
         Vec3d diff;
         double* m = average + 3*ci;
         
@@ -130,7 +131,7 @@ int GMM::whichModel( const Vec3d color ) const
     return maxModel;
 }
 
-void GMM::initLearning()
+void GMM::initParameter()
 {
     //for each model in this GMM
     for( int ci = 0; ci < modelNumInGMM; ci++)
@@ -157,7 +158,7 @@ void GMM::initLearning()
     totalSampleCount = 0;
 }
 //set value for ci model based on which model the color belongs to
-void GMM::addSample( int ci, const Vec3d color )
+void GMM::calcParameter( int ci, const Vec3d color )
 {
     //add color toghther for one model
     sums[ci][0] += color[0];
@@ -214,7 +215,7 @@ void GMM::endLearning()
             c[8] = prods[ci][2][2]/n - m[2]*m[2];
             
             //double dtrm = c[0]*(c[4]*c[8]-c[5]*c[7]) - c[1]*(c[3]*c[8]-c[5]*c[6]) + c[2]*(c[3]*c[7]-c[4]*c[6]);
-           
+            
             
             calcInverseCovAndDet(ci);
         }
@@ -261,12 +262,12 @@ static double calculateB( const Mat& img )
                 Vec3d diffColor = color - (Vec3d)img.at<Vec3b>(x-1,y-1);
                 B += diffColor.dot(diffColor);
             }
-            if( y>0 ) // up
+            if( x>0 ) // up
             {
                 Vec3d diffColor = color - (Vec3d)img.at<Vec3b>(x-1,y);
                 B += diffColor.dot(diffColor);
             }
-            if( y>0 && x<img.cols-1) // upright
+            if( x>0 && y<img.cols-1) // upright
             {
                 Vec3d diffColor = color - (Vec3d)img.at<Vec3b>(x-1,y+1);
                 B += diffColor.dot(diffColor);
@@ -353,7 +354,7 @@ static void checkMask( const Mat& img, const Mat& mask )
 
 
 // Initialize mask using rectangular.
- 
+
 static void initMaskWithRect( Mat& mask, Size imgSize, Rect rect )
 {
     mask.create( imgSize, CV_8UC1 );
@@ -363,14 +364,16 @@ static void initMaskWithRect( Mat& mask, Size imgSize, Rect rect )
 
 
 //Initialize GMM background and foreground models using kmeans algorithm.
- 
+
 static void initGMMs( const Mat& img, const Mat& mask, GMM& bgGMM, GMM& fgGMM )
 {
-    const int kMeansItCount = 10;
+    const int kMeansNum = 10;
     const int kMeansType = KMEANS_PP_CENTERS;
     
-    Mat bgClustered, fgClustered;
-    vector<Vec3f> bgSamples, fgSamples;
+    Mat bgClustered;
+    Mat fgClustered;
+    vector<Vec3f> bgSamples;
+    vector<Vec3f> fgSamples;
     
     //for each pixel in the image, put those BG in bgsample, FG in fgsample
     for( int x = 0; x < img.rows; x++ )
@@ -384,18 +387,18 @@ static void initGMMs( const Mat& img, const Mat& mask, GMM& bgGMM, GMM& fgGMM )
         }
     }
     Mat bgdSamplesMat( (int)bgSamples.size(), 3, CV_32FC1, &bgSamples[0][0] );
-    kmeans( bgdSamplesMat, GMM::modelNumInGMM, bgClustered, TermCriteria( CV_TERMCRIT_ITER, kMeansItCount, 0.0), 0, kMeansType );
+    kmeans( bgdSamplesMat, GMM::modelNumInGMM, bgClustered, TermCriteria( CV_TERMCRIT_ITER, kMeansNum, 0.0), 0, kMeansType );
     Mat fgdSamplesMat( (int)fgSamples.size(), 3, CV_32FC1, &fgSamples[0][0] );
-    kmeans( fgdSamplesMat, GMM::modelNumInGMM, fgClustered, TermCriteria( CV_TERMCRIT_ITER, kMeansItCount, 0.0), 0, kMeansType );
+    kmeans( fgdSamplesMat, GMM::modelNumInGMM, fgClustered, TermCriteria( CV_TERMCRIT_ITER, kMeansNum, 0.0), 0, kMeansType );
     
-    bgGMM.initLearning();
+    bgGMM.initParameter();
     for( int i = 0; i < (int)bgSamples.size(); i++ )
-        bgGMM.addSample( bgClustered.at<int>(i,0), bgSamples[i] );
+        bgGMM.calcParameter( bgClustered.at<int>(i,0), bgSamples[i] );
     bgGMM.endLearning();
     
-    fgGMM.initLearning();
+    fgGMM.initParameter();
     for( int i = 0; i < (int)fgSamples.size(); i++ )
-        fgGMM.addSample( fgClustered.at<int>(i,0), fgSamples[i] );
+        fgGMM.calcParameter( fgClustered.at<int>(i,0), fgSamples[i] );
     fgGMM.endLearning();
 }
 
@@ -427,8 +430,8 @@ static void assignGMMsComponents( const Mat& img, const Mat& mask, const GMM& bg
  */
 static void learnGMMs( const Mat& img, const Mat& mask, const Mat& pixelModel, GMM& bgGMM, GMM& fgGMM )
 {
-    bgGMM.initLearning();
-    fgGMM.initLearning();
+    bgGMM.initParameter();
+    fgGMM.initParameter();
     //Point p;
     for( int ci = 0; ci < GMM::modelNumInGMM; ci++ )
     {
@@ -439,9 +442,9 @@ static void learnGMMs( const Mat& img, const Mat& mask, const Mat& pixelModel, G
                 if( pixelModel.at<int>(x,y) == ci )
                 {
                     if( mask.at<uchar>(x,y) == BG || mask.at<uchar>(x,y) == PBG )
-                        bgGMM.addSample( ci, img.at<Vec3b>(x,y) );
+                        bgGMM.calcParameter( ci, img.at<Vec3b>(x,y) );
                     else
-                        fgGMM.addSample( ci, img.at<Vec3b>(x,y) );
+                        fgGMM.calcParameter( ci, img.at<Vec3b>(x,y) );
                 }
             }
         }
@@ -456,7 +459,7 @@ static void learnGMMs( const Mat& img, const Mat& mask, const Mat& pixelModel, G
 static void constructGCGraph( const Mat& img, const Mat& mask, const GMM& bgGMM, const GMM& fgGMM, double lambda,
                              const Mat& leftWeight, const Mat& upleftWeight, const Mat& upWeight, const Mat& uprightWeight,
                              GraphType* graph )
-{    
+{
     //For each point(x,y) in the graph;
     for( int x = 0; x < img.rows; x++ )
     {
@@ -515,7 +518,7 @@ static void constructGCGraph( const Mat& img, const Mat& mask, const GMM& bgGMM,
 
 
 // update the graph, return the new mask
-static void estimateSegmentation( GraphType * graph, Mat& mask )
+static void estimateSegmentation( GraphType* graph, Mat& mask )
 {
     //do max flow on the graph
     graph->maxflow();
@@ -536,12 +539,10 @@ static void estimateSegmentation( GraphType * graph, Mat& mask )
     }
 }
 
-//input image, maskimage which can tell us the FG and BG, rect(User choose), two GMM models and iterator number 
+//input image, maskimage which can tell us the FG and BG, rect(User choose), two GMM models and iterator number
 
-void grabCutMainFunction( Mat image, Mat& maskImage, Rect rect,
-                 Mat& myBgModel, Mat& myFgModel,
-                 int iterCount )
-{    
+void grabCutMainFunction( Mat image, Mat& maskImage, Rect rect, Mat& myBgModel, Mat& myFgModel, int iterCount )
+{
     //image mat
     Mat img = image;
     
@@ -555,7 +556,8 @@ void grabCutMainFunction( Mat image, Mat& maskImage, Rect rect,
     
     //create 2 GMM model for background and forground, each GMM has 5 gas model and each model has a modelsize
     // two GMM model: myBgModel and myFgModel
-    GMM bgGMM( myBgModel ), fgGMM( myFgModel );
+    GMM bgGMM( myBgModel );
+    GMM fgGMM( myFgModel );
     
     //model information for each pixel in the image
     Mat pixelModel( img.size(), CV_32SC1 );
@@ -569,24 +571,24 @@ void grabCutMainFunction( Mat image, Mat& maskImage, Rect rect,
     
     //chushihua two GMM
     initGMMs( img, maskImage, bgGMM, fgGMM );
-
+    
     //calculate three parameters in grabcut
     double gamma = 20;
     double lambda = 10*gamma;
     double B = calculateB(img);
     
-    //edge weights which are stored in the  
+    //edge weights which are stored in the
     Mat leftWeight, upleftWeight, upWeight, uprightWeight;
     calcWeight( img, leftWeight, upleftWeight, upWeight, uprightWeight, B, gamma );
     
+    //nodes number
+    int nodeNum = img.cols*img.rows;
+    //edge number
+    int edgeNum = 2*(4*img.cols*img.rows - 3*(img.cols + img.rows) + 2);
+    
     //four step of grab cut
     for( int i = 0; i < iterCount; i++ )
-    {        
-        //nodes number
-        int nodeNum = img.cols*img.rows;
-        //edge number
-        int edgeNum = 2*(4*img.cols*img.rows - 3*(img.cols + img.rows) + 2);
-        
+    {
         // create the graph by using these nodes and edges
         //graph.create(nodeNum, edgeNum);
         GraphType *graph = new GraphType(nodeNum, edgeNum);
@@ -606,13 +608,13 @@ void grabCutMainFunction( Mat image, Mat& maskImage, Rect rect,
 const Scalar BLUE = Scalar(255,0,0);
 
 
-static void getNewMask( Mat& maskImage, Mat& newMask )
+static void getMask( Mat& maskImage, Mat& realMask )
 {
     if( maskImage.empty() || maskImage.type()!=CV_8UC1 )
         CV_Error( CV_StsBadArg, "Mask is wrong!" );
-    if( newMask.empty() || newMask.rows!=maskImage.rows || newMask.cols!=maskImage.cols )
-        newMask.create( newMask.size(), CV_8UC1 );
-    newMask = maskImage & 1;
+    if( realMask.empty() || realMask.rows!=maskImage.rows || realMask.cols!=maskImage.cols )
+        realMask.create( maskImage.size(), CV_8UC1 );
+    realMask = maskImage & 1;
 }
 
 
@@ -647,7 +649,7 @@ private:
     const string* winName;
     const Mat* image;
     Mat maskImage;
-    Mat bgdModel, fgdModel;
+    Mat bgModel, fgModel;
     
     
     
@@ -681,31 +683,32 @@ void GrabCut::initialWindow( const Mat& myImage, const string& myWinName  )
     reset();
 }
 
-void GrabCut::showImage() 
+void GrabCut::showImage()
 {
     if(image->empty() || winName->empty())
     {
-         return;
+        return;
     }
-    Mat orignalImage;
-    Mat newMask;
+    Mat resultImage;
+    Mat realMask;
     if( !pressKey )
-        image->copyTo(orignalImage);
+        image->copyTo(resultImage);
     //key for begining iteration has been pressed
     else
     {
-        getNewMask( maskImage, newMask );
-        image->copyTo( orignalImage, newMask );
+        getMask( maskImage, realMask );
+        //copy to image depends on mask
+        image->copyTo( resultImage, realMask );
     }
     if( rectState == PROCESS || rectState == SET )
-        rectangle( orignalImage, Point( rect.x, rect.y ), Point(rect.x + rect.width, rect.y + rect.height ), BLUE, 10);
+        rectangle( resultImage, Point( rect.x, rect.y ), Point(rect.x + rect.width, rect.y + rect.height ), BLUE, 10);
     
-    imshow( *winName, orignalImage );
+    imshow( *winName, resultImage );
 }
 
 void GrabCut::setRectInMask()
 {
-    assert( !maskImage.empty() );  //make sure that mask is not empty. if it is empty, we have set it to background 
+    assert( !maskImage.empty() );  //make sure that mask is not empty. if it is empty, we have set it to background
     maskImage(rect).setTo( PFG); //set the rectangle part to forward
 }
 
@@ -721,9 +724,9 @@ void GrabCut::mouseGrab( int event, int x, int y, int flags, void* )
                 rectState = PROCESS;
                 rect = Rect( x, y, 0, 0 );
             }
-             break;
+            break;
         }
-           
+            
         case CV_EVENT_LBUTTONUP:
             if( rectState == PROCESS )
             {
@@ -748,8 +751,8 @@ void GrabCut::mouseGrab( int event, int x, int y, int flags, void* )
 
 int GrabCut::Iterator()
 {
-    //call grab cut algorithm
-    grabCutMainFunction( *image, maskImage, rect, bgdModel, fgdModel, 1);
+    //call grab cut algorithm, it will give us the result mask image and tell us which pixel should be copy from input to output image
+    grabCutMainFunction( *image, maskImage, rect, bgModel, fgModel, 10);
     if( !pressKey )
     {
         pressKey = true;
@@ -770,10 +773,18 @@ void mouseOperation( int event, int x, int y, int flags, void* param )
     mainObject.mouseGrab( event, x, y, flags, param );
 }
 
-int main()
+int main(int argc, char** argv )
 {
+    if( argc!=2 )
+    {
+        cout << "Usage:" << endl;
+        cout << "./GrabCut <image_path>" << endl;
+        cout << "Press B to iterate" << endl;
+        cout << "Press E to reset" << endl;
+        return 1;
+    }
 
-    string file = "/Users/Photeinis/Desktop/gc/lena.bmp";
+    string file = argv[1];
     if( file.empty() )
     {
         cout << "file read fail! " << file << endl;
@@ -801,22 +812,22 @@ int main()
         char operation = (char)key;
         switch(operation)
         {
-            //end the program
+                //end the program
             case '\x1b':
                 cvDestroyWindow( window.c_str() );
                 return 0;
-            //end this iteration
+                //end this iteration
             case 'e':
                 mainObject.reset();
                 mainObject.showImage();
                 break;
-            //begin a iteration
+                //begin a iteration
             case 'b':
                 int iterCount = mainObject.getIterCount();
                 cout << "Previous Iteration is " << iterCount<<endl;
                 if(mainObject.rectState != mainObject.SET||mainObject.rect.width==0||mainObject.rect.height==0)
                 {
-                     cout << "please choose you region!" << endl;
+                    cout << "please choose you region!" << endl;
                 }
                 else
                 {
