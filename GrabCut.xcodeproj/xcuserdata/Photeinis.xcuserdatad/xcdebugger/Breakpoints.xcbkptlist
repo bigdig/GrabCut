@@ -8,24 +8,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "GrabCut/main.cpp"
-         timestampString = "392788549.192873"
+         timestampString = "392878636.412501"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "462"
-         endingLineNumber = "462"
-         landmarkName = "constructGCGraph( const Mat&amp; img, const Mat&amp; mask, const GMM&amp; bgGMM, const GMM&amp; fgGMM, double lambda, const Mat&amp; leftWeight, const Mat&amp; upleftWeight, const Mat&amp; upWeight, const Mat&amp; uprightWeight, GraphType* graph )"
-         landmarkType = "7">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "GrabCut/main.cpp"
-         timestampString = "392788549.192873"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "40"
-         endingLineNumber = "40"
+         startingLineNumber = "43"
+         endingLineNumber = "43"
          landmarkName = "class GMM"
          landmarkType = "3">
       </FileBreakpoint>
